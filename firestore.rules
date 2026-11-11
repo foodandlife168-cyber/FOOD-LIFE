@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    function isValidProduct(data) {
+      return data.nameEn is string && data.nameEn.size() > 0 &&
+             data.sellingPrice is number && data.sellingPrice > 0 &&
+             data.isActive is bool;
+    }
+
+    match /products/{productId} {
+      allow get: if isValidId(productId);
+      allow list: if true;
+      allow create, update: if isValidId(productId);
+      allow delete: if isValidId(productId);
+    }
+
+    match /productImages/{imageId} {
+      allow get: if isValidId(imageId);
+      allow list: if true;
+      allow write: if isValidId(imageId);
+    }
+
+    match /promotionalMedia/{mediaId} {
+      allow get: if isValidId(mediaId);
+      allow list: if true;
+      allow write: if isValidId(mediaId);
+    }
+
+    match /customerAccounts/{customerId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /starPointsLedger/{txId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /annualRewards/{rewardId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /annualRewardAnnouncements/{announcementId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /orders/{orderId} {
+      allow get: if isValidId(orderId);
+      allow list: if true;
+      allow create, update: if isValidId(orderId);
+      allow delete: if false;
+    }
+
+    match /storeConfig/{configId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /stockMovements/{movementId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /purchaseOrders/{poId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+
+    match /deliveryAgents/{agentId} {
+      allow get, list: if true;
+      allow write: if true;
+    }
+  }
+}

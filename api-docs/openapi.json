@@ -1,0 +1,903 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FOOD & LIFE GROCERY - Official Store API",
+    "description": "Comprehensive OpenAPI 3.0 specification for FOOD & LIFE GROCERY (RG GROUP (PVT) LTD - Katuloya Branch). Generated strictly from verified backend routes implemented in server.ts for RG GROUP CENTRAL AI AGENT integration. Endpoints are explicitly labeled as [VERIFIED] and segregated by authentication scope. No secrets, credentials, or actual tokens are included.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "FOOD & LIFE GROCERY (Katuloya Branch)",
+      "url": "https://food-life-grocery-online-ordering-tracking.ai.studio",
+      "email": "foodandlife168@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://ais-pre-b5dedugjljzjxanhwe6f5a-475062765829.europe-west1.run.app",
+      "description": "Shared Production Preview Environment (europe-west1)"
+    },
+    {
+      "url": "https://ais-dev-b5dedugjljzjxanhwe6f5a-475062765829.europe-west1.run.app",
+      "description": "Development Sandbox Environment (europe-west1)"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Container Dev Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Public Storefront & Catalog",
+      "description": "Verified public catalog, product discovery, and store operational settings (No authentication required)."
+    },
+    {
+      "name": "Customer Orders & Tracking",
+      "description": "Verified customer ordering, digital bill retrieval, and real-time order tracking (No authentication required)."
+    },
+    {
+      "name": "Management Reports & Accounting",
+      "description": "Verified business performance dashboard, customer ledgers, delivery hire accounting, and procurement reconciliations (Staff/Admin Bearer Auth required)."
+    },
+    {
+      "name": "Store Administration & Orders",
+      "description": "Verified order status management, payments recording, and catalog editing (Staff/Admin Bearer Auth required)."
+    },
+    {
+      "name": "Inventory & Purchase Orders",
+      "description": "Verified stock movements, purchase order creation, goods receipt, and reorder alerts (Staff/Admin Bearer Auth required)."
+    },
+    {
+      "name": "Delivery Fleet & Live GPS",
+      "description": "Verified driver assignments, dispatch tracking, driver accounting, and live telematics (Staff/Admin Bearer Auth required)."
+    },
+    {
+      "name": "Delivery Driver Portal",
+      "description": "Verified delivery agent portal endpoints, assignment management, and GPS ping updates (Driver Bearer Auth required)."
+    },
+    {
+      "name": "WhatsApp Cloud API Hub",
+      "description": "Verified Meta WhatsApp Cloud API logs, status, webhook handler, and test pings (Admin Bearer Auth required)."
+    }
+  ],
+  "paths": {
+    "/api/store-config": {
+      "get": {
+        "tags": ["Public Storefront & Catalog"],
+        "summary": "[VERIFIED] Retrieve Store Configuration",
+        "description": "Returns operational settings including opening hours, delivery boundaries (Katuloya, Thawalanthanne), delivery fees, and People's Bank payment account details.",
+        "operationId": "getStoreConfig",
+        "responses": {
+          "200": {
+            "description": "Store configuration retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": ["Public Storefront & Catalog"],
+        "summary": "[VERIFIED] List Active Catalog Products",
+        "description": "Returns all active grocery products, Sinhala and English names, categories, selling prices, and current stock availability.",
+        "operationId": "getPublicProducts",
+        "responses": {
+          "200": {
+            "description": "List of active store products.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "tags": ["Customer Orders & Tracking"],
+        "summary": "[VERIFIED] Place New Customer Order",
+        "description": "Submits a new customer grocery order, validates stock, assigns a unique tracking token, generates a delivery estimate, and triggers automated WhatsApp receipt.",
+        "operationId": "createOrder",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order placed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or missing required customer fields."
+          }
+        }
+      }
+    },
+    "/api/track/{token}": {
+      "get": {
+        "tags": ["Customer Orders & Tracking"],
+        "summary": "[VERIFIED] Track Order by Token",
+        "description": "Retrieves public status timeline, driver assignment details, and active GPS location coordinates for an order using its secure tracking token.",
+        "operationId": "trackOrder",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "description": "Order tracking token (e.g. TRK-2026-XXXX)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order tracking details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order tracking token not found."
+          }
+        }
+      }
+    },
+    "/api/customer/orders": {
+      "get": {
+        "tags": ["Customer Orders & Tracking"],
+        "summary": "[VERIFIED] List Customer Orders by Phone Number",
+        "description": "Returns previous grocery orders matching a validated Sri Lankan phone number (+94 XX XXX XXXX).",
+        "operationId": "getCustomerOrders",
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "required": true,
+            "description": "Customer mobile phone number",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching orders.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Order" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{token}/bill": {
+      "get": {
+        "tags": ["Customer Orders & Tracking"],
+        "summary": "[VERIFIED] Get Itemized Digital Bill",
+        "description": "Returns official itemized bill details, RG GROUP Katuloya branch header, item breakdown, and People's Bank payment instructions.",
+        "operationId": "getOrderBill",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Digital bill representation."
+          }
+        }
+      }
+    },
+    "/api/admin/login": {
+      "post": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] Staff & Administrator Login",
+        "description": "Authenticates staff or administrators using username and password. Returns a 64-character SHA-256 session token, assigned staff role, and permissions.",
+        "operationId": "adminLogin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string", "example": "Admin" },
+                  "password": { "type": "string", "example": "<STAFF_PASSWORD>" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" },
+                        "username": { "type": "string" },
+                        "role": { "type": "string", "enum": ["Admin", "Manager", "Staff"] },
+                        "permissions": { "type": "array", "items": { "type": "string" } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials or account locked."
+          }
+        }
+      }
+    },
+    "/api/admin/verify-session": {
+      "get": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] Verify Staff Session",
+        "description": "Verifies that the provided Bearer token is valid, active, and unexpired.",
+        "operationId": "verifySession",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Session is active and valid."
+          },
+          "401": {
+            "description": "Session token expired or invalid."
+          }
+        }
+      }
+    },
+    "/api/admin/logout": {
+      "post": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] Staff Logout",
+        "description": "Explicitly invalidates the Bearer session token on both container cache and Firestore.",
+        "operationId": "adminLogout",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Successfully logged out." }
+        }
+      }
+    },
+    "/api/admin/reports/data": {
+      "get": {
+        "tags": ["Management Reports & Accounting"],
+        "summary": "[VERIFIED] Fetch Management Reports & Accounting Data",
+        "description": "Main reporting engine delivering 11 Performance Dashboard metrics, customer ledgers, segregated delivery hire expenses, stock valuations, PO procurement tracking, and delivery agent registers in Sri Lanka Time (UTC+05:30).",
+        "operationId": "getManagementReportsData",
+        "security": [{ "StaffBearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "reportType",
+            "in": "query",
+            "description": "Period type: all, daily, monthly, annual, or custom",
+            "schema": { "type": "string", "enum": ["all", "daily", "monthly", "annual", "custom"] }
+          },
+          { "name": "date", "in": "query", "description": "Target date for daily report (YYYY-MM-DD)", "schema": { "type": "string" } },
+          { "name": "month", "in": "query", "description": "Target month (1-12)", "schema": { "type": "integer" } },
+          { "name": "year", "in": "query", "description": "Target year (e.g. 2026)", "schema": { "type": "integer" } },
+          { "name": "fromDate", "in": "query", "description": "Start date for custom range (YYYY-MM-DD)", "schema": { "type": "string" } },
+          { "name": "toDate", "in": "query", "description": "End date for custom range (YYYY-MM-DD)", "schema": { "type": "string" } },
+          { "name": "customerPhone", "in": "query", "description": "Filter by customer phone number", "schema": { "type": "string" } },
+          { "name": "orderStatus", "in": "query", "description": "Filter by order status", "schema": { "type": "string" } },
+          { "name": "paymentStatus", "in": "query", "description": "Filter by payment status", "schema": { "type": "string" } },
+          { "name": "poStatus", "in": "query", "description": "Filter by purchase order status", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Complete management reporting dataset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementReportsResponse"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized access." }
+        }
+      }
+    },
+    "/api/admin/reports/audit-log": {
+      "post": {
+        "tags": ["Management Reports & Accounting"],
+        "summary": "[VERIFIED] Record Report Download Audit Log",
+        "description": "Appends an immutable audit log record documenting when a staff member downloaded a confidential business PDF report.",
+        "operationId": "recordAuditLog",
+        "security": [{ "StaffBearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reportType": { "type": "string", "example": "DAILY_REPORT_PDF" }
+                },
+                "required": ["reportType"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Audit entry recorded." }
+        }
+      }
+    },
+    "/api/admin/reports/audit-logs": {
+      "get": {
+        "tags": ["Management Reports & Accounting"],
+        "summary": "[VERIFIED] Get Report Download Security Audit Trail",
+        "description": "Retrieves historical audit entries of downloaded reports (Admin role only).",
+        "operationId": "getAuditLogs",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of report audit logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReportAuditLog" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/staff-accounts": {
+      "get": {
+        "tags": ["Management Reports & Accounting"],
+        "summary": "[VERIFIED] List Staff Accounts",
+        "description": "Retrieves registered staff users, roles, and assigned permissions (Admin only).",
+        "operationId": "getStaffAccounts",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of staff accounts."
+          }
+        }
+      },
+      "post": {
+        "tags": ["Management Reports & Accounting"],
+        "summary": "[VERIFIED] Create Staff Account",
+        "description": "Creates a new staff login with role (Manager or Staff) and granular permissions (Admin only).",
+        "operationId": "createStaffAccount",
+        "security": [{ "StaffBearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "name": { "type": "string" },
+                  "role": { "type": "string", "enum": ["Manager", "Staff"] },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "name", "role", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Staff account created successfully." }
+        }
+      }
+    },
+    "/api/admin/export-csv": {
+      "get": {
+        "tags": ["Management Reports & Accounting"],
+        "summary": "[VERIFIED] Export Orders CSV Spreadsheet",
+        "description": "Downloads complete order and payment records in standard CSV format for external ledger importing.",
+        "operationId": "exportOrdersCsv",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "CSV spreadsheet file stream.",
+            "content": { "text/csv": {} }
+          }
+        }
+      }
+    },
+    "/api/admin/orders": {
+      "get": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] List All Orders (Admin Master Register)",
+        "description": "Retrieves all store orders with customer contacts, delivery addresses, payment balances, and status.",
+        "operationId": "getAdminOrders",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Full orders list."
+          }
+        }
+      }
+    },
+    "/api/admin/orders/{id}/status": {
+      "patch": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] Update Order Status",
+        "description": "Transitions an order to Order Received, Preparing Order, Out for Delivery, Delivered, Collected, or Cancelled.",
+        "operationId": "updateOrderStatus",
+        "security": [{ "StaffBearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["Order Received", "Preparing Order", "Out for Delivery", "Delivered", "Collected by Customer", "Cancelled"]
+                  }
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Order status updated." }
+        }
+      }
+    },
+    "/api/admin/orders/{id}/payments": {
+      "post": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] Record Order Payment",
+        "description": "Records cash, bank transfer, or card payments (supports partial payments with automatic running balance tracking).",
+        "operationId": "recordOrderPayment",
+        "security": [{ "StaffBearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": { "type": "number", "example": 1000 },
+                  "method": { "type": "string", "enum": ["cash", "bank_transfer", "credit_card", "other"] },
+                  "notes": { "type": "string" }
+                },
+                "required": ["amount", "method"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Payment successfully recorded." }
+        }
+      }
+    },
+    "/api/admin/products": {
+      "get": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] List Products (Admin Inventory View)",
+        "description": "Retrieves catalog products including cost price, stock valuation, and reorder levels.",
+        "operationId": "getAdminProducts",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Products list." }
+        }
+      },
+      "post": {
+        "tags": ["Store Administration & Orders"],
+        "summary": "[VERIFIED] Create or Update Product",
+        "description": "Saves product details, pricing, unit, SKU, cost price, and stock levels.",
+        "operationId": "saveAdminProduct",
+        "security": [{ "StaffBearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Product" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Product saved." }
+        }
+      }
+    },
+    "/api/admin/purchase-orders": {
+      "get": {
+        "tags": ["Inventory & Purchase Orders"],
+        "summary": "[VERIFIED] List Purchase Orders",
+        "description": "Retrieves wholesale supplier purchase orders and receiving status.",
+        "operationId": "getPurchaseOrders",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of purchase orders." }
+        }
+      },
+      "post": {
+        "tags": ["Inventory & Purchase Orders"],
+        "summary": "[VERIFIED] Create Purchase Order",
+        "description": "Creates a wholesale replenishment order with supplier details and item reorder quantities.",
+        "operationId": "createPurchaseOrder",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Purchase order created." }
+        }
+      }
+    },
+    "/api/admin/purchase-orders/{id}/receive-goods": {
+      "post": {
+        "tags": ["Inventory & Purchase Orders"],
+        "summary": "[VERIFIED] Reconcile Received Goods on PO",
+        "description": "Reconciles incoming supplier delivery, updates physical inventory stock, and creates stock movement logs.",
+        "operationId": "receiveGoods",
+        "security": [{ "StaffBearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Stock reconciled." }
+        }
+      }
+    },
+    "/api/admin/delivery-agents": {
+      "get": {
+        "tags": ["Delivery Fleet & Live GPS"],
+        "summary": "[VERIFIED] List Registered Delivery Agents",
+        "description": "Retrieves registered delivery drivers, contact numbers, vehicles, and operational status.",
+        "operationId": "getDeliveryAgents",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Delivery agents roster." }
+        }
+      },
+      "post": {
+        "tags": ["Delivery Fleet & Live GPS"],
+        "summary": "[VERIFIED] Register Delivery Agent",
+        "description": "Registers a new delivery driver with vehicle info and login credentials.",
+        "operationId": "createDeliveryAgent",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Driver registered." }
+        }
+      }
+    },
+    "/api/admin/orders/{id}/assign-delivery-agent": {
+      "post": {
+        "tags": ["Delivery Fleet & Live GPS"],
+        "summary": "[VERIFIED] Assign Delivery Driver to Order",
+        "description": "Assigns a driver to an order with agreed driver hire compensation and creates a segregated delivery hire ledger entry.",
+        "operationId": "assignDeliveryAgent",
+        "security": [{ "StaffBearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Driver assigned successfully." }
+        }
+      }
+    },
+    "/api/admin/live-deliveries": {
+      "get": {
+        "tags": ["Delivery Fleet & Live GPS"],
+        "summary": "[VERIFIED] Retrieve Live Delivery GPS Telemetry",
+        "description": "Returns current active deliveries and real-time GPS coordinates of en route drivers.",
+        "operationId": "getLiveDeliveries",
+        "security": [{ "StaffBearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Active delivery telematics." }
+        }
+      }
+    },
+    "/api/delivery-agent/login": {
+      "post": {
+        "tags": ["Delivery Driver Portal"],
+        "summary": "[VERIFIED] Delivery Driver Login",
+        "description": "Authenticates delivery drivers using phone number/ID and driver PIN. Returns scoped driver session token.",
+        "operationId": "driverLogin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["phone", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Driver authenticated successfully." },
+          "401": { "description": "Invalid driver credentials." }
+        }
+      }
+    },
+    "/api/delivery-agent/orders": {
+      "get": {
+        "tags": ["Delivery Driver Portal"],
+        "summary": "[VERIFIED] Get Driver Assigned Orders",
+        "description": "Returns active assigned delivery drop-offs and historical completed trips for the authenticated driver.",
+        "operationId": "getDriverOrders",
+        "security": [{ "DriverBearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Assigned orders list." }
+        }
+      }
+    },
+    "/api/delivery-agent/orders/{id}/location": {
+      "post": {
+        "tags": ["Delivery Driver Portal"],
+        "summary": "[VERIFIED] Ingest Driver GPS Location Ping",
+        "description": "Receives latitude, longitude, speed, and heading coordinates from the driver's smartphone GPS for customer live tracking.",
+        "operationId": "updateDriverLocation",
+        "security": [{ "DriverBearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "latitude": { "type": "number", "example": 7.3195 },
+                  "longitude": { "type": "number", "example": 80.6842 },
+                  "accuracy": { "type": "number", "example": 10 }
+                },
+                "required": ["latitude", "longitude"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Location coordinates recorded." }
+        }
+      }
+    },
+    "/api/whatsapp/webhook": {
+      "get": {
+        "tags": ["WhatsApp Cloud API Hub"],
+        "summary": "[VERIFIED] Meta WhatsApp Webhook Verification",
+        "description": "Handles Meta Webhook challenge verification for WhatsApp Business API integration.",
+        "operationId": "verifyWhatsAppWebhook",
+        "responses": {
+          "200": { "description": "Webhook verification challenge echoed." }
+        }
+      },
+      "post": {
+        "tags": ["WhatsApp Cloud API Hub"],
+        "summary": "[VERIFIED] Meta WhatsApp Inbound Message Webhook",
+        "description": "Receives incoming WhatsApp customer grocery orders, customer inquiries, and delivery updates.",
+        "operationId": "receiveWhatsAppWebhook",
+        "responses": {
+          "200": { "description": "Inbound webhook acknowledged." }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "StaffBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Token",
+        "description": "Staff or Administrator Bearer token obtained from POST /api/admin/login."
+      },
+      "DriverBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "DriverToken",
+        "description": "Delivery driver token obtained from POST /api/delivery-agent/login."
+      }
+    },
+    "schemas": {
+      "StoreConfig": {
+        "type": "object",
+        "properties": {
+          "storeName": { "type": "string", "example": "FOOD & LIFE GROCERY" },
+          "parentCompany": { "type": "string", "example": "RG GROUP (PVT) LTD" },
+          "branch": { "type": "string", "example": "Katuloya Branch" },
+          "address": { "type": "string", "example": "929, Kandy Road, Cross Wattegama, Katuloya, Thawalanthanne" },
+          "phone": { "type": "string", "example": "+94 71 259 5683" },
+          "currency": { "type": "string", "example": "LKR" },
+          "openingTime": { "type": "string", "example": "06:30" },
+          "closingTime": { "type": "string", "example": "21:30" },
+          "deliveryFee": { "type": "number", "example": 250 },
+          "bankDetails": {
+            "type": "object",
+            "properties": {
+              "bankName": { "type": "string", "example": "People's Bank" },
+              "accountNumber": { "type": "string", "example": "211200380039804" }
+            }
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nameEn": { "type": "string", "example": "Keeri Samba Rice 5kg" },
+          "nameSi": { "type": "string", "example": "කීරි සම්බා සහල් 5kg" },
+          "category": { "type": "string", "example": "Rice & Grains" },
+          "unit": { "type": "string", "example": "5 kg" },
+          "sellingPrice": { "type": "number", "example": 1850 },
+          "costPrice": { "type": "number", "example": 1500 },
+          "availableStock": { "type": "number", "example": 45 },
+          "minStockLevel": { "type": "number", "example": 10 },
+          "imageUrl": { "type": "string" },
+          "isActive": { "type": "boolean", "example": true }
+        },
+        "required": ["id", "nameEn", "category", "unit", "sellingPrice"]
+      },
+      "CreateOrderRequest": {
+        "type": "object",
+        "properties": {
+          "customerName": { "type": "string", "example": "Kamal Wickramasinghe" },
+          "customerPhone": { "type": "string", "example": "+94 77 123 4567" },
+          "deliveryArea": { "type": "string", "example": "Katuloya" },
+          "deliveryAddress": { "type": "string", "example": "No. 42, Temple Road, Katuloya" },
+          "paymentMethod": { "type": "string", "enum": ["cash_on_delivery", "bank_transfer"] },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "productId": { "type": "string" },
+                "quantity": { "type": "number", "example": 2 }
+              },
+              "required": ["productId", "quantity"]
+            }
+          }
+        },
+        "required": ["customerName", "customerPhone", "deliveryArea", "deliveryAddress", "paymentMethod", "items"]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "orderNumber": { "type": "string", "example": "FL-2026-000120" },
+          "trackingToken": { "type": "string", "example": "TRK-2026-9A8B7C" },
+          "customerName": { "type": "string" },
+          "customerPhone": { "type": "string" },
+          "deliveryArea": { "type": "string" },
+          "deliveryAddress": { "type": "string" },
+          "subtotal": { "type": "number" },
+          "deliveryFee": { "type": "number" },
+          "total": { "type": "number" },
+          "paidAmount": { "type": "number" },
+          "outstandingBalance": { "type": "number" },
+          "status": { "type": "string", "example": "Order Received" },
+          "paymentStatus": { "type": "string", "enum": ["UNPAID", "PARTIAL", "PAID"] },
+          "paymentMethod": { "type": "string" },
+          "assignedAgentId": { "type": "string" },
+          "assignedAgentName": { "type": "string" },
+          "createdAt": { "type": "string" }
+        }
+      },
+      "ManagementReportsResponse": {
+        "type": "object",
+        "properties": {
+          "stats": {
+            "type": "object",
+            "properties": {
+              "totalRevenue": { "type": "number" },
+              "totalOrders": { "type": "integer" },
+              "pendingOrders": { "type": "integer" },
+              "preparingOrders": { "type": "integer" },
+              "outForDeliveryOrders": { "type": "integer" },
+              "deliveredOrders": { "type": "integer" },
+              "customerOutstandingBalances": { "type": "number" },
+              "deliveryHireAccounting": {
+                "type": "object",
+                "properties": {
+                  "totalFeesCollected": { "type": "number" },
+                  "totalHireExpenses": { "type": "number" },
+                  "totalPaidToAgents": { "type": "number" },
+                  "outstandingAgentPayments": { "type": "number" }
+                }
+              },
+              "productsStockSummary": {
+                "type": "object",
+                "properties": {
+                  "totalProducts": { "type": "integer" },
+                  "inStockCount": { "type": "integer" },
+                  "lowStockCount": { "type": "integer" },
+                  "outOfStockCount": { "type": "integer" },
+                  "totalStockUnits": { "type": "integer" },
+                  "retailValue": { "type": "number" },
+                  "costValue": { "type": "number" }
+                }
+              },
+              "purchaseOrdersSummary": {
+                "type": "object",
+                "properties": {
+                  "totalPOs": { "type": "integer" },
+                  "totalOrderedQty": { "type": "integer" },
+                  "totalReceivedQty": { "type": "integer" },
+                  "pendingQty": { "type": "integer" },
+                  "totalPurchaseCommitment": { "type": "number" },
+                  "outstandingSupplierPayments": { "type": "number" }
+                }
+              },
+              "registeredDeliveryAgents": {
+                "type": "object",
+                "properties": {
+                  "totalAgents": { "type": "integer" },
+                  "activeAgents": { "type": "integer" },
+                  "totalTripsCompleted": { "type": "integer" }
+                }
+              }
+            }
+          },
+          "customerAccounts": { "type": "array", "items": { "type": "object" } },
+          "deliveryHireRecords": { "type": "array", "items": { "type": "object" } },
+          "productStockItems": { "type": "array", "items": { "type": "object" } },
+          "purchaseOrderReportItems": { "type": "array", "items": { "type": "object" } },
+          "deliveryAgentRegisterItems": { "type": "array", "items": { "type": "object" } },
+          "periodLabel": { "type": "string" }
+        }
+      },
+      "ReportAuditLog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "timestamp": { "type": "string" },
+          "staffId": { "type": "string" },
+          "staffName": { "type": "string" },
+          "role": { "type": "string" },
+          "reportType": { "type": "string" },
+          "ipAddress": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,577 @@
+{
+  "info": {
+    "name": "FOOD & LIFE GROCERY - Official API Collection (RG GROUP)",
+    "_postman_id": "b3e94471-884b-4a57-b08e-foodlife2026",
+    "description": "Verified API Collection for FOOD & LIFE GROCERY (RG GROUP (PVT) LTD - Katuloya Branch). Designed for RG GROUP CENTRAL AI AGENT integration. All routes are strictly mapped to existing verified backend handlers in server.ts. Placeholders are used for tokens and sensitive inputs. Zero secrets included.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://ais-pre-b5dedugjljzjxanhwe6f5a-475062765829.europe-west1.run.app",
+      "type": "string"
+    },
+    {
+      "key": "staff_bearer_token",
+      "value": "{{REPLACE_WITH_STAFF_BEARER_TOKEN}}",
+      "type": "string"
+    },
+    {
+      "key": "driver_bearer_token",
+      "value": "{{REPLACE_WITH_DRIVER_BEARER_TOKEN}}",
+      "type": "string"
+    },
+    {
+      "key": "sample_tracking_token",
+      "value": "TRK-2026-EXAMPLE",
+      "type": "string"
+    },
+    {
+      "key": "sample_order_id",
+      "value": "order-sample-id",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Public Storefront & Catalog [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] Get Store Configuration",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/store-config",
+              "host": ["{{base_url}}"],
+              "path": ["api", "store-config"]
+            },
+            "description": "Returns store hours, Katuloya delivery fee rules, and People's Bank account details."
+          }
+        },
+        {
+          "name": "[VERIFIED] List Active Catalog Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products"]
+            },
+            "description": "Returns active groceries, pricing in LKR, and live stock."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Customer Orders & Tracking [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] Place Customer Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Sample Customer\",\n  \"customerPhone\": \"+94 77 123 4567\",\n  \"deliveryArea\": \"Katuloya\",\n  \"deliveryAddress\": \"No. 42, Temple Road, Katuloya\",\n  \"paymentMethod\": \"cash_on_delivery\",\n  \"items\": [\n    {\n      \"productId\": \"FL-PROD-001\",\n      \"quantity\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "orders"]
+            },
+            "description": "Submits a new order and returns tracking token."
+          }
+        },
+        {
+          "name": "[VERIFIED] Track Order by Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/track/{{sample_tracking_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "track", "{{sample_tracking_token}}"]
+            },
+            "description": "Retrieves public status timeline and driver GPS coordinates."
+          }
+        },
+        {
+          "name": "[VERIFIED] List Customer Orders by Phone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customer/orders?phone=%2B94771234567",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "orders"],
+              "query": [
+                {
+                  "key": "phone",
+                  "value": "%2B94771234567"
+                }
+              ]
+            },
+            "description": "Returns past grocery orders for returning customers."
+          }
+        },
+        {
+          "name": "[VERIFIED] Get Order Digital Bill",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/orders/{{sample_tracking_token}}/bill",
+              "host": ["{{base_url}}"],
+              "path": ["api", "orders", "{{sample_tracking_token}}", "bill"]
+            },
+            "description": "Itemized invoice breakdown for an order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Management Reports & Accounting [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] Fetch Management Reports & Accounting Dataset",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/data?reportType=all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "data"],
+              "query": [
+                {
+                  "key": "reportType",
+                  "value": "all",
+                  "description": "Options: all, daily, monthly, annual, custom"
+                }
+              ]
+            },
+            "description": "Core intelligence endpoint delivering all 11 performance dashboard cards, customer balance ledgers, delivery hire segregation, and stock valuations."
+          }
+        },
+        {
+          "name": "[VERIFIED] Log Report Download Audit Entry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"DAILY_REPORT_PDF\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/audit-log",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "audit-log"]
+            },
+            "description": "Appends permanent record of confidential report download."
+          }
+        },
+        {
+          "name": "[VERIFIED] Get Security Audit Trail (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reports/audit-logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reports", "audit-logs"]
+            },
+            "description": "Audit history of downloaded business statements."
+          }
+        },
+        {
+          "name": "[VERIFIED] Export Orders CSV Spreadsheet",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/export-csv",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "export-csv"]
+            },
+            "description": "Raw CSV spreadsheet stream for offline ingestion."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Store Administration & Orders [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] Staff & Admin Sign In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"Admin\",\n  \"password\": \"{{REPLACE_WITH_STAFF_PASSWORD}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "login"]
+            },
+            "description": "Exchanges staff credentials for a 64-char session Bearer token."
+          }
+        },
+        {
+          "name": "[VERIFIED] Verify Active Session",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/verify-session",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "verify-session"]
+            },
+            "description": "Validates current session state."
+          }
+        },
+        {
+          "name": "[VERIFIED] List All Orders (Admin Master Register)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "orders"]
+            },
+            "description": "Full master orders register."
+          }
+        },
+        {
+          "name": "[VERIFIED] Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Delivered\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/orders/{{sample_order_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "orders", "{{sample_order_id}}", "status"]
+            },
+            "description": "Transitions order workflow state."
+          }
+        },
+        {
+          "name": "[VERIFIED] Record Order Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1500,\n  \"method\": \"cash\",\n  \"notes\": \"Payment received at store counter\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/orders/{{sample_order_id}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "orders", "{{sample_order_id}}", "payments"]
+            },
+            "description": "Records full or partial payment with automated ledger update."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Inventory & Procurement [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] List Products (Admin Inventory View)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "products"]
+            },
+            "description": "Inventory list with cost and retail valuations."
+          }
+        },
+        {
+          "name": "[VERIFIED] List Purchase Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/purchase-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "purchase-orders"]
+            },
+            "description": "Wholesale supplier replenishment orders."
+          }
+        },
+        {
+          "name": "[VERIFIED] Get Stock Reorder Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/reorder-suggestions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "reorder-suggestions"]
+            },
+            "description": "Algorithmic low-stock replenishment suggestions."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Fleet & Logistics Management [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] List Delivery Agents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/delivery-agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "delivery-agents"]
+            },
+            "description": "Delivery fleet roster."
+          }
+        },
+        {
+          "name": "[VERIFIED] Get Live Deliveries Telematics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/live-deliveries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "live-deliveries"]
+            },
+            "description": "Real-time GPS telematics for en-route deliveries."
+          }
+        },
+        {
+          "name": "[VERIFIED] Delivery Hire Accounting",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/delivery-accounting",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "delivery-accounting"]
+            },
+            "description": "Driver hire fee ledger and pending driver payouts."
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Delivery Driver Portal [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] Driver Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"94712595683\",\n  \"password\": \"{{REPLACE_WITH_DRIVER_PIN}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/delivery-agent/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "delivery-agent", "login"]
+            },
+            "description": "Authenticates driver and returns driver Bearer token."
+          }
+        },
+        {
+          "name": "[VERIFIED] Get Assigned Driver Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driver_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/delivery-agent/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "delivery-agent", "orders"]
+            },
+            "description": "Returns active trips and drop-off addresses."
+          }
+        },
+        {
+          "name": "[VERIFIED] Post Driver GPS Location Ping",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{driver_bearer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 7.3195,\n  \"longitude\": 80.6842,\n  \"accuracy\": 8\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/delivery-agent/orders/{{sample_order_id}}/location",
+              "host": ["{{base_url}}"],
+              "path": ["api", "delivery-agent", "orders", "{{sample_order_id}}", "location"]
+            },
+            "description": "Streams smartphone GPS coordinate ping."
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. WhatsApp Cloud API Hub [VERIFIED]",
+      "item": [
+        {
+          "name": "[VERIFIED] Get WhatsApp Cloud API Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/whatsapp/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "whatsapp", "status"]
+            },
+            "description": "Checks connectivity with Meta Graph Cloud API."
+          }
+        },
+        {
+          "name": "[VERIFIED] Get WhatsApp Notification Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{staff_bearer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/whatsapp/logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "whatsapp", "logs"]
+            },
+            "description": "Log of dispatched customer WhatsApp order confirmations."
+          }
+        }
+      ]
+    }
+  ]
+}

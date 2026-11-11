@@ -1,0 +1,287 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Food & Life Grocery grocery item catalog record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nameEn": { "type": "string" },
+        "nameSi": { "type": "string" },
+        "category": { "type": "string" },
+        "categorySi": { "type": "string" },
+        "unit": { "type": "string" },
+        "unitSi": { "type": "string" },
+        "sellingPrice": { "type": "number" },
+        "availableStock": { "type": "number" },
+        "discountPercent": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "badge": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["nameEn", "sellingPrice", "availableStock", "isActive"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer grocery order record and tracking information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "trackingToken": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "deliveryArea": { "type": "string" },
+        "deliveryAddress": { "type": "string" },
+        "deliveryLandmark": { "type": "string" },
+        "deliveryNotes": { "type": "string" },
+        "deliveryType": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discountTotal": { "type": "number" },
+        "deliveryCharge": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "status": { "type": "string" },
+        "statusHistory": { "type": "array" },
+        "stockRestored": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["orderNumber", "trackingToken", "customerName", "customerPhone", "total", "status"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Audit record of inventory deductions, cancellations, restorations, and purchase orders",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderId": { "type": "string" },
+        "productId": { "type": "string" },
+        "productNameEn": { "type": "string" },
+        "quantity": { "type": "number" },
+        "previousStock": { "type": "number" },
+        "newStock": { "type": "number" },
+        "date": { "type": "string" },
+        "reason": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["productId", "quantity", "newStock", "date", "reason"]
+    },
+    "PurchaseOrder": {
+      "title": "PurchaseOrder",
+      "description": "Official Food & Life Grocery purchase order document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "poNumber": { "type": "string" },
+        "date": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "supplierContact": { "type": "string" },
+        "notes": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "grandTotal": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["poNumber", "date", "supplierName", "grandTotal", "status"]
+    },
+    "StoreConfig": {
+      "title": "StoreConfig",
+      "description": "Store operational settings, delivery charges, and contact info",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string" },
+        "location": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "baseDeliveryFee": { "type": "number" },
+        "freeDeliveryThreshold": { "type": "number" },
+        "deliveryRadiusKm": { "type": "number" },
+        "isOpen": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["storeName", "baseDeliveryFee", "freeDeliveryThreshold"]
+    },
+    "DeliveryAgent": {
+      "title": "DeliveryAgent",
+      "description": "Delivery agent personnel records, vehicle details, and default hire charges",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "mobilePhone": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "vehicleRegistrationNumber": { "type": "string" },
+        "defaultHireCharge": { "type": "number" },
+        "status": { "type": "string" },
+        "isDeleted": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["fullName", "mobilePhone", "vehicleRegistrationNumber", "defaultHireCharge", "status"]
+    },
+    "ProductImage": {
+      "title": "ProductImage",
+      "description": "Permanent cloud storage records and base64 backups for product images",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "dataBase64": { "type": "string" },
+        "size": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "productId", "imageUrl", "createdAt"]
+    },
+    "CustomerAccount": {
+      "title": "CustomerAccount",
+      "description": "Customer accounting ledger, total ordered, total paid, outstanding balance, and history",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "totalOrders": { "type": "number" },
+        "totalOrdered": { "type": "number" },
+        "totalPaid": { "type": "number" },
+        "outstandingBalance": { "type": "number" },
+        "lastOrderDate": { "type": "string" },
+        "lastPaymentDate": { "type": "string" },
+        "accountStatus": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["customerId", "customerName", "customerPhone", "totalOrdered", "totalPaid", "outstandingBalance"]
+    },
+    "PromotionalMedia": {
+      "title": "PromotionalMedia",
+      "description": "Customer dashboard promotional video and image banners managed by Admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["video", "image"] },
+        "url": { "type": "string" },
+        "thumbnailUrl": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "badge": { "type": "string" },
+        "callToActionText": { "type": "string" },
+        "callToActionLink": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "order": { "type": "number" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "durationSeconds": { "type": "number" },
+        "mimeType": { "type": "string" },
+        "filename": { "type": "string" },
+        "size": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "type", "url", "title", "isActive", "order"]
+    },
+    "StarPointsTransaction": {
+      "title": "StarPointsTransaction",
+      "description": "Star Points customer loyalty transaction ledger record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerName": { "type": "string" },
+        "orderId": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "type": { "type": "string", "enum": ["EARN", "REDEEM", "EXPIRY", "REVERSAL", "ADJUSTMENT"] },
+        "purchaseAmount": { "type": "number" },
+        "points": { "type": "number" },
+        "cycle": { "type": "string" },
+        "date": { "type": "string" },
+        "expiryDate": { "type": "string" },
+        "description": { "type": "string" },
+        "receiptNumber": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "customerId", "customerPhone", "type", "points", "cycle", "date", "expiryDate"]
+    },
+    "AnnualReward": {
+      "title": "AnnualReward",
+      "description": "Admin controlled annual customer reward records, vouchers, hampers, and approval status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "cycle": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "rewardType": { "type": "string" },
+        "rewardTitle": { "type": "string" },
+        "rewardDescription": { "type": "string" },
+        "rewardValue": { "type": "number" },
+        "quantity": { "type": "number" },
+        "status": { "type": "string" },
+        "voucherCode": { "type": "string" },
+        "collectionInstructions": { "type": "string" },
+        "distributionDate": { "type": "string" },
+        "approvedBy": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "cycle", "customerId", "rewardTitle", "status", "approvedBy"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Products catalog available to customers and managed by Admin"
+    },
+    "/customerAccounts/{customerId}": {
+      "schema": "CustomerAccount",
+      "description": "Customer financial accounts and outstanding balances"
+    },
+    "/starPointsLedger/{txId}": {
+      "schema": "StarPointsTransaction",
+      "description": "Customer Star Points loyalty transactions, awards, redemptions, and expirations"
+    },
+    "/annualRewards/{rewardId}": {
+      "schema": "AnnualReward",
+      "description": "Admin approved annual customer rewards, gifts, vouchers and collection status"
+    },
+    "/productImages/{imageId}": {
+      "schema": "ProductImage",
+      "description": "Permanent cloud-stored product image metadata and cross-device backups"
+    },
+    "/promotionalMedia/{mediaId}": {
+      "schema": "PromotionalMedia",
+      "description": "Promotional media videos and image slides displayed on Customer Dashboard"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "All customer grocery orders"
+    },
+    "/stockMovements/{movementId}": {
+      "schema": "StockMovement",
+      "description": "Audit trail of all inventory deductions and restorations"
+    },
+    "/purchaseOrders/{poId}": {
+      "schema": "PurchaseOrder",
+      "description": "Staff generated purchase orders"
+    },
+    "/deliveryAgents/{agentId}": {
+      "schema": "DeliveryAgent",
+      "description": "Store delivery agents and drivers"
+    },
+    "/storeConfig/{configId}": {
+      "schema": "StoreConfig",
+      "description": "Store configurations"
+    }
+  }
+}
+

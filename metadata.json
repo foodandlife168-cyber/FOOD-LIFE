@@ -1,0 +1,6 @@
+{
+  "name": "FOOD & LIFE GROCERY - Online Ordering & Tracking",
+  "description": "Full-stack mobile-first grocery e-commerce and order tracking system for FOOD & LIFE GROCERY in Katuloya, Thawalanthanne, Sri Lanka, with Meta WhatsApp Business Cloud API integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
